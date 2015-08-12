@@ -438,4 +438,105 @@ class JCMTimeSliderUtilsTests1: XCTestCase {
         XCTAssertEqual(testPoint.ti, targetTi, "Time interval should match")
         
     }
+  
+  
+  //
+  //  Tests for 'linearDateFrom' method with empty breakpoints and zero offset
+  //
+  func testlinearDateFromWithEmptyBreakpoints() {
+    
+    var breakPoints = Dictionary<JCMTimeSliderUtils.BreakPoint,TimeMappingPoint>()
+    var offset: CGFloat
+    offset = 0.0
+    
+    let date = self.tsu.linearDateFrom(breakPoints, from: offset)
+    
+    let refDate = NSDate(timeIntervalSinceReferenceDate: 0)
+    XCTAssertEqual(date, refDate, "Should return a reference date")
+  }
+  
+  
+  //
+  //  Tests for 'linearDateFrom' method with one valid breakpoint (earliest only; invalid configuration) and zero offset
+  //
+  func testlinearDateFromWithOneBreakpoint() {
+    
+    let firstDate = NSDate()
+    let lastDate = firstDate.dateByAddingTimeInterval(60*60*24*7) // add one week
+    let lowestCoord: CGFloat = 100.0
+    let highestCoord: CGFloat = 200.0
+    let numDates = 3
+    
+    var breakPoints = Dictionary<JCMTimeSliderUtils.BreakPoint,TimeMappingPoint>()
+    
+    // Use some valid values for earliest and latest break points
+    breakPoints[.Earliest] = TimeMappingPoint(ti: firstDate.timeIntervalSinceReferenceDate, y: lowestCoord, index: 0)
+    
+    var offset: CGFloat
+    offset = 0.0
+    
+    let date = self.tsu.linearDateFrom(breakPoints, from: offset)
+    
+    let refDate = NSDate(timeIntervalSinceReferenceDate: 0)
+    XCTAssertEqual(date, refDate, "Should return a reference date")
+  }
+  
+  
+  //
+  //  Tests for 'linearDateFrom' method with two valid breakpoints (earliest, latest) and zero offset
+  //
+  func testlinearDateFromWithTwoBreakpoints() {
+    
+    let firstDate = NSDate()
+    let lastDate = firstDate.dateByAddingTimeInterval(60*60*24*7) // add one week
+    let lowestCoord: CGFloat = 100.0
+    let highestCoord: CGFloat = 200.0
+    let numDates = 2
+    
+    var breakPoints = Dictionary<JCMTimeSliderUtils.BreakPoint,TimeMappingPoint>()
+    
+    // Use some valid values for earliest and latest break points
+    breakPoints[.Earliest] = TimeMappingPoint(ti: firstDate.timeIntervalSinceReferenceDate, y: lowestCoord, index: 0)
+    breakPoints[.Latest] = TimeMappingPoint(ti: lastDate.timeIntervalSinceReferenceDate, y: highestCoord, index: numDates-1)
+    
+    var offset: CGFloat
+    offset = 200.0
+    
+    let date = self.tsu.linearDateFrom(breakPoints, from: offset)
+    
+    let refDate = lastDate
+    XCTAssertEqual(date, refDate, "Should return correct date")
+  }
+  
+  
+  //
+  //  Tests for 'linearDateFrom' method with three valid breakpoints (earliest, latest) and zero offset
+  //
+  func testlinearDateFromWithThreeBreakpoints() {
+    
+    let firstDate = NSDate()
+    let lastDate = firstDate.dateByAddingTimeInterval(60*60*24*7) // add one week
+    let lowestCoord: CGFloat = 100.0
+    let highestCoord: CGFloat = 200.0
+    let numDates = 3
+    
+    var breakPoints = Dictionary<JCMTimeSliderUtils.BreakPoint,TimeMappingPoint>()
+    
+    // Use some valid values for earliest and latest break points
+    breakPoints[.Earliest] = TimeMappingPoint(ti: firstDate.timeIntervalSinceReferenceDate, y: lowestCoord, index: 0)
+    breakPoints[.FirstDistorted] = TimeMappingPoint(ti: firstDate.timeIntervalSinceReferenceDate + 60*60*24, y: lowestCoord, index: 1)
+    breakPoints[.Latest] = TimeMappingPoint(ti: lastDate.timeIntervalSinceReferenceDate, y: highestCoord, index: numDates-1)
+
+    var offset: CGFloat
+
+    offset = lowestCoord
+    var date = self.tsu.linearDateFrom(breakPoints, from: offset)
+    var refDate = firstDate
+    XCTAssertEqual(date, refDate, "Should return correct date")
+    
+    offset = highestCoord
+    date = self.tsu.linearDateFrom(breakPoints, from: offset)
+    refDate = lastDate
+    XCTAssertEqual(date, refDate, "Should return correct date")
+  }
 }
