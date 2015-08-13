@@ -83,16 +83,10 @@ class ViewController: UIViewController, JCMTimeSliderControlDelegate {
   @IBOutlet var timeControl3: JCMTimeSliderControl?
   @IBOutlet var timeControl4: JCMTimeSliderControl?
   
-//  var sample1 = SampleData(points: 4)
-//  var sample2 = SampleData(points: 12)
-//  var sample3 = SampleData(points: 100)
-//  var sample4 = SampleData(points: 800)
-
-  var sample1 = SampleData(points: 2)
-  var sample2 = SampleData(points: 3)
-  var sample3 = SampleData(points: 4)
-  var sample4 = SampleData(points: 5)
-
+  var sample1 = SampleData(points: 4)
+  var sample2 = SampleData(points: 12)
+  var sample3 = SampleData(points: 100)
+  var sample4 = SampleData(points: 800)
   
   override func viewDidLoad() {
     super.viewDidLoad()

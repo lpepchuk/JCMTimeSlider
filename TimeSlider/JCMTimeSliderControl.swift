@@ -524,18 +524,28 @@ class JCMTimeSliderControl: UIControl, UIDynamicAnimatorDelegate, JCMTimeSliderC
         
         // Always show the labels for the first date
         if (expanded && (i==0) && (lastSelectedIndex != 0)) {
-          let label = labelsLayer?.sublayers[JCMTimeSliderUtils.BreakPoint.Earliest.rawValue] as! CATextLayer
-          label.position = CGPoint(x: labelLeadSpace, y: offset + fontOffset)
-          label.opacity = 1.0
-          label.string = self.tsu.dateString(dataSource!.dataPointAtIndex(i), format:self.boundariesDateFormat(self))
+          let topLabel = labelsLayer?.sublayers[JCMTimeSliderUtils.BreakPoint.Earliest.rawValue] as! CATextLayer
+          
+          let labelPosition = CGPoint(x: labelLeadSpace, y: offset + fontOffset)
+          topLabel.position = labelPosition
+          
+          let labelText = self.tsu.dateString(dataSource!.dataPointAtIndex(i), format:self.boundariesDateFormat(self))
+          topLabel.string = labelText
+          
+          topLabel.opacity = 1.0
         }
         
         // Always show the label for the last date
         if (expanded && (i == lastIndex-1) && (lastSelectedIndex != lastIndex-1)) {
-          let label = labelsLayer?.sublayers[JCMTimeSliderUtils.BreakPoint.Latest.rawValue] as! CATextLayer
-          label.position = CGPoint(x: labelLeadSpace, y: offset + fontOffset)
-          label.string = self.tsu.dateString(dataSource!.dataPointAtIndex(i), format:self.boundariesDateFormat(self))
-          label.opacity = 1.0
+          let bottomLabel = labelsLayer?.sublayers[JCMTimeSliderUtils.BreakPoint.Latest.rawValue] as! CATextLayer
+          
+          let labelPosition = CGPoint(x: labelLeadSpace, y: offset + fontOffset)
+          bottomLabel.position = labelPosition
+          
+          let labelText = self.tsu.dateString(dataSource!.dataPointAtIndex(i), format:self.boundariesDateFormat(self))
+          bottomLabel.string = labelText
+
+          bottomLabel.opacity = 1.0
         }
         
         // Find out if this tick is a "normal" one (outside the expanded range), and process it
@@ -551,10 +561,18 @@ class JCMTimeSliderControl: UIControl, UIDynamicAnimatorDelegate, JCMTimeSliderC
               tick.lineWidth = 3.0
               
               if expanded {
-                let label = labelsLayer?.sublayers[JCMTimeSliderUtils.BreakPoint.Selected.rawValue] as! CATextLayer
-                label.position = CGPoint(x: labelLeadSpace, y: offset + fontOffset)
-                label.opacity = 1.0
-                label.string = self.tsu.dateString(dataSource!.dataPointAtIndex(i), format:self.dataPointDateFormat(self))
+                
+                // Draw selected label
+                
+                let selectedLabel = labelsLayer?.sublayers[JCMTimeSliderUtils.BreakPoint.Selected.rawValue] as! CATextLayer
+                
+                let labelPosition = CGPoint(x: labelLeadSpace, y: offset + fontOffset)
+                selectedLabel.position = labelPosition
+                
+                let labelText = self.tsu.dateString(dataSource!.dataPointAtIndex(i), format:self.dataPointDateFormat(self))
+                selectedLabel.string = labelText
+
+                selectedLabel.opacity = 1.0
               }
               
             } else {
@@ -575,17 +593,8 @@ class JCMTimeSliderControl: UIControl, UIDynamicAnimatorDelegate, JCMTimeSliderC
           }
         }
         
-        
-        // Defines
         tick.position = CGPoint(x: (expanded ? expandedControlTickXOffset : 0.0), y: offset)
         
-        // Hide any labels out of bounds
-        for label in labelsLayer!.sublayers as! [CATextLayer] {
-          if (label.position.y < breakPoints[.Earliest]!.y) ||
-            (label.position.y > breakPoints[.Latest]!.y) {
-              label.opacity = 0.0
-          }
-        }
       }
       CATransaction.commit()
     }
